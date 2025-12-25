@@ -11,7 +11,7 @@
   <style>
     body {
       background: linear-gradient(135deg, #89f7fe, #66a6ff);
-      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
     }
 
     .card {
@@ -32,9 +32,17 @@
       padding: 15px;
     }
 
-    /* ANIMASI */
-    .correct { color: #28a745; animation: pop 0.6s ease; }
-    .wrong { color: #dc3545; animation: shake 0.4s ease; }
+    .correct {
+      color: #28a745;
+      animation: pop 0.6s ease;
+      font-weight: bold;
+    }
+
+    .wrong {
+      color: #dc3545;
+      animation: shake 0.4s ease;
+      font-weight: bold;
+    }
 
     @keyframes pop {
       0% { transform: scale(0.5); opacity: 0; }
@@ -50,10 +58,9 @@
       100% { transform: translateX(0); }
     }
 
-    /* BUAH BESAR */
     .fruit {
       font-size: 4rem;
-      margin: 8px;
+      margin: 10px;
       display: inline-block;
       animation: pop 0.4s ease;
     }
@@ -116,50 +123,50 @@
   function startGame(type) {
     gameType = type;
     score = 0;
-    document.getElementById("score").innerText = score;
+    scoreEl().innerText = score;
 
-    document.getElementById("menu").classList.add("hidden");
-    document.getElementById("game").classList.remove("hidden");
+    menu().classList.add("hidden");
+    game().classList.remove("hidden");
 
-    if (type === "add") gameTitle.innerText = "➕ Penjumlahan";
-    if (type === "sub") gameTitle.innerText = "➖ Pengurangan";
-    if (type === "img") gameTitle.innerText = "🍎 Hitung Buah";
+    if (type === "add") gameTitle().innerText = "➕ Penjumlahan";
+    if (type === "sub") gameTitle().innerText = "➖ Pengurangan";
+    if (type === "img") gameTitle().innerText = "🍎 Hitung Buah";
 
     newQuestion();
   }
 
   function backMenu() {
-    document.getElementById("game").classList.add("hidden");
-    document.getElementById("menu").classList.remove("hidden");
+    game().classList.add("hidden");
+    menu().classList.remove("hidden");
   }
 
   function newQuestion() {
-    result.innerText = "";
-    result.className = "";
-    images.innerHTML = "";
+    result().innerText = "";
+    result().className = "";
+    images().innerHTML = "";
 
     let answers = [];
 
     if (gameType === "add") {
       let a = rand(1,10), b = rand(1,10);
       correctAnswer = a + b;
-      question.innerText = `${a} + ${b}`;
+      question().innerText = `${a} + ${b}`;
     }
 
     if (gameType === "sub") {
       let a = rand(5,10), b = rand(1,4);
       correctAnswer = a - b;
-      question.innerText = `${a} - ${b}`;
+      question().innerText = `${a} - ${b}`;
     }
 
     if (gameType === "img") {
       let count = rand(1,7);
       let fruit = fruits[rand(0, fruits.length-1)];
       correctAnswer = count;
-      question.innerText = "Ada berapa buah ini?";
+      question().innerText = "Ada berapa buah ini?";
 
       for (let i = 0; i < count; i++) {
-        images.innerHTML += `<span class="fruit">${fruit}</span>`;
+        images().innerHTML += `<span class="fruit">${fruit}</span>`;
       }
     }
 
@@ -178,20 +185,29 @@
     const chosen = parseInt(document.getElementById("btn"+i).innerText);
 
     if (chosen === correctAnswer) {
-      result.innerText = "🎉 BENAR!";
-      result.className = "correct";
+      result().innerText = "🎉 BENAR!";
+      result().className = "correct";
       score++;
     } else {
-      result.innerText = "😢 SALAH!";
-      result.className = "wrong";
+      result().innerText = "😢 SALAH!";
+      result().className = "wrong";
     }
 
-    document.getElementById("score").innerText = score;
+    scoreEl().innerText = score;
   }
 
   function rand(min,max){
     return Math.floor(Math.random()*(max-min+1))+min;
   }
+
+  // shortcut element
+  const menu = () => document.getElementById("menu");
+  const game = () => document.getElementById("game");
+  const question = () => document.getElementById("question");
+  const images = () => document.getElementById("images");
+  const result = () => document.getElementById("result");
+  const scoreEl = () => document.getElementById("score");
+  const gameTitle = () => document.getElementById("gameTitle");
 </script>
 
 </body>
