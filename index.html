@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>MathPlay 🎮</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #89f7fe, #66a6ff);
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+    }
+
+    .card {
+      border-radius: 25px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    .hidden { display: none; }
+
+    .question {
+      font-size: 3rem;
+      font-weight: bold;
+    }
+
+    .btn-answer {
+      font-size: 1.8rem;
+      border-radius: 20px;
+      padding: 15px;
+    }
+
+    /* ANIMASI */
+    .correct { color: #28a745; animation: pop 0.6s ease; }
+    .wrong { color: #dc3545; animation: shake 0.4s ease; }
+
+    @keyframes pop {
+      0% { transform: scale(0.5); opacity: 0; }
+      70% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      50% { transform: translateX(10px); }
+      75% { transform: translateX(-10px); }
+      100% { transform: translateX(0); }
+    }
+
+    /* BUAH BESAR */
+    .fruit {
+      font-size: 4rem;
+      margin: 8px;
+      display: inline-block;
+      animation: pop 0.4s ease;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container py-5">
+
+  <!-- MENU -->
+  <div id="menu" class="text-center">
+    <div class="card p-4">
+      <h1>🎮 MathPlay</h1>
+      <p>Pilih permainan!</p>
+
+      <div class="d-grid gap-3 mt-4">
+        <button class="btn btn-warning btn-lg" onclick="startGame('add')">➕ Penjumlahan</button>
+        <button class="btn btn-success btn-lg" onclick="startGame('sub')">➖ Pengurangan</button>
+        <button class="btn btn-danger btn-lg" onclick="startGame('img')">🍎 Hitung Buah</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME -->
+  <div id="game" class="hidden">
+    <div class="card p-4 text-center">
+
+      <button class="btn btn-secondary mb-3" onclick="backMenu()">⬅ Menu</button>
+
+      <h2 id="gameTitle"></h2>
+
+      <div id="question" class="question my-3"></div>
+
+      <div id="images" class="mb-4"></div>
+
+      <div class="d-grid gap-3">
+        <button class="btn btn-warning btn-answer" onclick="checkAnswer(0)" id="btn0"></button>
+        <button class="btn btn-success btn-answer" onclick="checkAnswer(1)" id="btn1"></button>
+        <button class="btn btn-danger btn-answer" onclick="checkAnswer(2)" id="btn2"></button>
+      </div>
+
+      <h2 id="result" class="mt-4"></h2>
+      <p>⭐ Skor: <span id="score">0</span></p>
+
+      <button class="btn btn-primary mt-3" onclick="newQuestion()">Soal Baru 🔄</button>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let correctAnswer = 0;
+  let score = 0;
+  let gameType = "";
+
+  const fruits = ["🍎","🍌","🍇","🍉","🍓","🍍","🍊"];
+
+  function startGame(type) {
+    gameType = type;
+    score = 0;
+    document.getElementById("score").innerText = score;
+
+    document.getElementById("menu").classList.add("hidden");
+    document.getElementById("game").classList.remove("hidden");
+
+    if (type === "add") gameTitle.innerText = "➕ Penjumlahan";
+    if (type === "sub") gameTitle.innerText = "➖ Pengurangan";
+    if (type === "img") gameTitle.innerText = "🍎 Hitung Buah";
+
+    newQuestion();
+  }
+
+  function backMenu() {
+    document.getElementById("game").classList.add("hidden");
+    document.getElementById("menu").classList.remove("hidden");
+  }
+
+  function newQuestion() {
+    result.innerText = "";
+    result.className = "";
+    images.innerHTML = "";
+
+    let answers = [];
+
+    if (gameType === "add") {
+      let a = rand(1,10), b = rand(1,10);
+      correctAnswer = a + b;
+      question.innerText = `${a} + ${b}`;
+    }
+
+    if (gameType === "sub") {
+      let a = rand(5,10), b = rand(1,4);
+      correctAnswer = a - b;
+      question.innerText = `${a} - ${b}`;
+    }
+
+    if (gameType === "img") {
+      let count = rand(1,7);
+      let fruit = fruits[rand(0, fruits.length-1)];
+      correctAnswer = count;
+      question.innerText = "Ada berapa buah ini?";
+
+      for (let i = 0; i < count; i++) {
+        images.innerHTML += `<span class="fruit">${fruit}</span>`;
+      }
+    }
+
+    answers = [
+      correctAnswer,
+      correctAnswer + rand(1,2),
+      Math.max(0, correctAnswer - rand(1,2))
+    ].sort(() => Math.random() - 0.5);
+
+    answers.forEach((v,i)=>{
+      document.getElementById("btn"+i).innerText = v;
+    });
+  }
+
+  function checkAnswer(i) {
+    const chosen = parseInt(document.getElementById("btn"+i).innerText);
+
+    if (chosen === correctAnswer) {
+      result.innerText = "🎉 BENAR!";
+      result.className = "correct";
+      score++;
+    } else {
+      result.innerText = "😢 SALAH!";
+      result.className = "wrong";
+    }
+
+    document.getElementById("score").innerText = score;
+  }
+
+  function rand(min,max){
+    return Math.floor(Math.random()*(max-min+1))+min;
+  }
+</script>
+
+</body>
+</html>
