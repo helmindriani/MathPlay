@@ -8,6 +8,9 @@
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <style>
     body {
       background: linear-gradient(135deg, #89f7fe, #66a6ff);
@@ -32,40 +35,10 @@
       padding: 18px;
     }
 
-    /* HASIL JAWABAN */
-    .correct {
-      color: #28a745;
-      font-size: 3rem;
-      font-weight: bold;
-      animation: pop 0.6s ease;
-    }
-
-    .wrong {
-      color: #dc3545;
-      font-size: 3rem;
-      font-weight: bold;
-      animation: shake 0.4s ease;
-    }
-
-    @keyframes pop {
-      0% { transform: scale(0.5); opacity: 0; }
-      70% { transform: scale(1.3); opacity: 1; }
-      100% { transform: scale(1); }
-    }
-
-    @keyframes shake {
-      0% { transform: translateX(0); }
-      25% { transform: translateX(-12px); }
-      50% { transform: translateX(12px); }
-      75% { transform: translateX(-12px); }
-      100% { transform: translateX(0); }
-    }
-
     .fruit {
       font-size: 4.5rem;
       margin: 12px;
       display: inline-block;
-      animation: pop 0.4s ease;
     }
   </style>
 </head>
@@ -106,10 +79,7 @@
         <button class="btn btn-danger btn-answer" onclick="checkAnswer(2)" id="btn2"></button>
       </div>
 
-      <div id="result" class="mt-4"></div>
-      <p class="fs-4">⭐ Skor: <span id="score">0</span></p>
-
-      <button class="btn btn-primary mt-3 btn-lg" onclick="newQuestion()">Soal Baru 🔄</button>
+      <p class="fs-4 mt-4">⭐ Skor: <span id="score">0</span></p>
 
     </div>
   </div>
@@ -144,8 +114,7 @@
   }
 
   function newQuestion() {
-    result().innerHTML = "";
-    result().className = "";
+    question().innerText = "";
     images().innerHTML = "";
 
     let answers = [];
@@ -166,7 +135,6 @@
       let count = rand(1,7);
       let fruit = fruits[rand(0, fruits.length-1)];
       correctAnswer = count;
-      question().innerText = "Ada berapa buah ini?";
 
       for (let i = 0; i < count; i++) {
         images().innerHTML += `<span class="fruit">${fruit}</span>`;
@@ -188,27 +156,37 @@
     const chosen = parseInt(document.getElementById("btn"+i).innerText);
 
     if (chosen === correctAnswer) {
-      result().innerHTML = "🎉<br>BENAR!";
-      result().className = "correct";
       score++;
-    } else {
-      result().innerHTML = "😢<br>SALAH!";
-      result().className = "wrong";
-    }
+      scoreEl().innerText = score;
 
-    scoreEl().innerText = score;
+      Swal.fire({
+        icon: "success",
+        title: "🎉 BENAR!",
+        text: "Hebat sekali!",
+        confirmButtonText: "Lanjut"
+      }).then(() => {
+        newQuestion(); // 🔁 SOAL BARU OTOMATIS
+      });
+
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "😢 SALAH!",
+        text: "Coba lagi ya!",
+        confirmButtonText: "OK"
+      });
+    }
   }
 
   function rand(min,max){
     return Math.floor(Math.random()*(max-min+1))+min;
   }
 
-  // shortcut
+  // shortcut element
   const menu = () => document.getElementById("menu");
   const game = () => document.getElementById("game");
   const question = () => document.getElementById("question");
   const images = () => document.getElementById("images");
-  const result = () => document.getElementById("result");
   const scoreEl = () => document.getElementById("score");
   const gameTitle = () => document.getElementById("gameTitle");
 </script>
